@@ -32,7 +32,7 @@
             ]);
         }
 
-        public function update(string $name, string $email, int $id): bool{
+        public function update(int $id, string $name, string $email): bool{
             $stmt = $this->pdo->prepare("update users set name = :name, email = :email where id = :id");
 
             return $stmt->execute([
