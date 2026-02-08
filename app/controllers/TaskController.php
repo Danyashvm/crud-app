@@ -13,17 +13,29 @@
             return $this->taskModel->getAll();
         }
 
-        public function store(array $data): void{
+        public function store(array $data): ?array{
+            if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+                die("CSRF token mismatch");
+
+            $error = [];
+            
             $title = trim($data['title'] ?? '');
             $description = trim($data['description'] ?? '');
             $is_done = isset($data['is_done']) ? 1 : 0;
 
-            if($title == "" || $description == "")
-                return;
+            if($title === ''){
+                $error[] = "Название обязательно";
+            }
+            if($description === ''){
+                $error[] = "Описание обязательно";
+            }
+            if(!empty($error)){
+                return $error;
+            }
 
             $this->taskModel->create($title, $description, $is_done);
             
-            header('Location: ../public/index.php?page=tasks');
+            header('Location: ?page=tasks');
             exit;
         }
 
@@ -31,13 +43,24 @@
             return $this->taskModel->find($id);
         }
 
-        public function update(int $id, array $data): void{
+        public function update(int $id, array $data): ?array{
+            if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+                die("CSRF token mismatch");
+            $error = [];
+            
             $title = trim($data['title'] ?? '');
             $description = trim($data['description'] ?? '');
             $is_done = trim($data['is_done'] ?? '0');
 
-            if($title == "" || $description == "")
-                return;
+            if($title === ''){
+                $error[] = "Название обязательно";
+            }
+            if($description === ''){
+                $error[] = "Описание обязательно";
+            }
+            if(!empty($error)){
+                return $error;
+            }
 
             $this->taskModel->update($id, $title, $description, $is_done);
 

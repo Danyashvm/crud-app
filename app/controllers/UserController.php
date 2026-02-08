@@ -15,13 +15,21 @@
             return $this->userModel->getAll();
         }   
 
-        public function store(array $data): void
+        public function store(array $data): ?array
         {
+            if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+                die("CSRF token mismatch");
+
+            $error = [];
             $name = trim($data['name'] ?? '');
             $email = trim($data['email'] ?? '');
 
-            if($name == "" || $email == "")
-                return;
+            if($name === "")
+                $error[] = "Имя обязательно";
+            if($email === '')
+                $error[] = "Email обязателен";
+            if(!empty($error))
+                return $error;
             
             $this->userModel->create($name, $email);
 
@@ -33,12 +41,22 @@
         {
             return $this->userModel->find($id);
         }
-        public function update(int $id, array $data): void
+        public function update(int $id, array $data): ?array
         {
+            if(!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token'])
+                die("CSRF token mismatch");
+
+            $error = [];
+
             $name = trim($data['name'] ?? '');
             $email = trim($data['email'] ?? '');
-            if($name == "" || $email == "")
-                return;
+
+            if($name === "")
+                $error[] = "Имя обязательно";
+            if($email === '')
+                $error[] = "Email обязателен";
+            if(!empty($error))
+                return $error;
 
             $this->userModel->update($id,$name,$email);
 

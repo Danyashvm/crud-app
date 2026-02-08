@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users CRUD</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-</head>
-<body>
+<?php require_once __DIR__ . '/../layout/header.php' ?>
+
     <h1>Users</h1>
 
-    <form method="post" action="?action=<?= $editUser ? 'update&id='. $editUser['id'] : 'store' ?>">
+    <?php if(!empty($error)): ?>
+        <div class="error" style="color: red; font-weight: bold"> 
+            <ul>
+                <?php foreach($error as $errors): ?>
+                    <li><?= htmlspecialchars($errors) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <form method="post" action="?page=users&action=<?= $editUser ? 'update&id='. $editUser['id'] : 'store' ?>">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <input type="text" name="name" placeholder="Имя" value="<?= htmlspecialchars($editUser['name'] ?? '' ) ?>">
         <input type="text" name="email" placeholder="E-mail" value="<?= htmlspecialchars($editUser['email'] ?? '' ) ?>">
         <button type="submit"><?= $editUser ? 'Изменить' : 'Добавить' ?></button>
@@ -23,10 +27,10 @@
                 <?= htmlspecialchars($user['name']) ?> -
                 <?= htmlspecialchars($user['email']) ?>
 
-                <a href="?action=edit&id=<?= $user['id'] ?>">Изменить</a>
-                <a href="?action=delete&id=<?= $user['id'] ?>" onclick="return confirm('Удалить?');">Удалить</a>
+                <a href="?page=users&action=edit&id=<?= $user['id'] ?>">Изменить</a>
+                <a href="?page=users&action=delete&id=<?= $user['id'] ?>" onclick="return confirm('Удалить?');">Удалить</a>
             </li>
         <?php endforeach; ?>
     </ul>
-</body>
-</html>
+
+<?php require_once __DIR__ . '/../layout/footer.php' ?>
